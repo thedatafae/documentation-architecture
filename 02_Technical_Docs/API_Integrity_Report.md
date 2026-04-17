@@ -1,57 +1,61 @@
-# 🛡️ SecurePay: API & Database Integrity Lab
+# GitHub API Automation Framework (OAuth 2.0)
 
-A specialized SQA automation project designed to validate **API-to-Database persistence** and **transactional integrity**. This lab utilizes a **Grey-Box testing** approach to ensure that high-level API responses accurately reflect the low-level MySQL state.
+A professional-grade API testing suite developed to validate the **GitHub REST API** using advanced automation techniques. This project demonstrates industry-standard SQA practices, including **Bearer Token (OAuth 2.0)** authorization, dynamic data chaining, and comprehensive resilience testing.
 
----
+## 🚀 Key Automation Features
 
-### 📊 Automated Quality Dashboard
-This project generates a professional **Newman HTML Dashboard** for every test run, providing real-time visibility into system health.
+* **Security-First Architecture:** Utilized Postman Environment variables with secret-masking to handle sensitive credentials safely. Credentials are decoupled from test logic to ensure environment portability.
+* **Dynamic Data Chaining:** Engineered JavaScript scripts to extract resource attributes from `POST` responses and inject them into subsequent `PATCH`, `GET`, and `DELETE` requests, achieving a zero-manual E2E execution flow.
+* **Modular Test Design:** Organized the suite into logical layers:
+    * `01_Authentication`: Validates token integrity and scope permissions.
+    * `02_Repository_Management`: Handles the full CRUD lifecycle of a repository.
+    * `03_Negative_Scenarios`: Validates system resilience against bad data and conflicts.
+* **Automated Teardown:** Implemented a **recursive cleanup script** using `postman.setNextRequest` to purge test artifacts and ensure environment idempotency after every run.
 
-* **Total Assertions**: 19 automated checks executed in under 2 seconds.
-* **Visual Evidence**: Detailed logs of every Request/Response pair, including headers and JSON bodies.
-* **Failure Analysis**: Dedicated section for failed tests, showing exactly where the Database logic broke.
+## 🛠️ Tech Stack
 
-```mermaid
-graph LR
-    A[Auth Validation] --> B[CRUD Operations]
-    B --> C[Negative Testing]
-    C --> D[Environment Teardown]
-    D -->|Success| E[Quality Dashboard]
-```
+* **Tooling:** Postman
+* **Runner:** Newman CLI
+* **Scripting:** JavaScript (Postman Sandbox)
+* **Reporting:** Newman htmlextra
+* **Auth:** OAuth 2.0 (Bearer Tokens)
 
----
+## 🐞 Bug Discovery Log: Non-Deterministic Type Validation
 
-### 🧪 Advanced Test Scenarios
-We implemented five distinct test tiers to ensure total system reliability:
+During negative testing, an inconsistent validation pattern was identified in the repository creation endpoint:
+* **Issue:** The API intermittently accepts a Boolean `true` for a String-based `name` field.
+* **Observed Behavior:** The system occasionally performs implicit coercion (`201 Created`) and other times correctly enforces the schema (`422 Unprocessable Entity`).
+* **QA Impact:** This highlights a potential inconsistency in schema enforcement across API nodes or clusters. The test suite was designed to flag these non-deterministic states for further investigation.
 
-| Tier | Test Type | Objective |
-| :--- | :--- | :--- |
-| **01** | **Structure & DType** | Validating JSON schema and ensuring MySQL `DECIMAL` types aren't corrupted by the Python "Pipe". |
-| **02** | **Data Mapping** | Verifying 1:1 parity between the MySQL "Source of Truth" and the API response. |
-| **03** | **Request Chaining** | Using dynamic environment variables to capture balances before and after transactions for mathematical proof. |
-| **04** | **Negative & Security** | Stress-testing the API with "Ghost Users," negative amounts, and SQL injection attempts. |
-| **05** | **ACID Integrity** | Verifying that the Database correctly triggers a `ROLLBACK` during server crashes (500 errors). |
+## 📊 Test Execution Results
 
----
+To maintain security compliance and prevent the exposure of active OAuth 2.0 tokens, raw HTML reports are excluded. Below is a summary of the automated test execution results.
 
-### 📁 Project Structure
-* **`/backend`**: Flask API logic with intentional "hidden" bugs.
-* **`/database`**: SQL scripts for schema, seeding, and manual integrity checks.
-* **`/testing`**: Postman Collections and Environment variables.
-* **`/reports`**: Automated HTML test execution dashboards.
+### Newman CLI Summary
+The following screenshot confirms the successful execution of all test suites, including authentication, CRUD operations, and boundary-value negative scenarios.
 
----
+![Execution Summary](reports/summary.png)
 
-### 🚦 Getting Started
-1.  **Database**: Import `database/schema.sql` and `database/seed_data.sql` into MySQL.
-2.  **API**: Run `pip install -r requirements.txt` and start the server with `python backend/main.py`.
-3.  **Tests**: Execute the Newman suite:
+### Automated Test Pass Rate
+* **Total Assertions:** 14
+* **Failed:** 0
+* **Success Rate:** 100%
+
+## 📥 Installation & Usage
+
+1.  **Clone the Repository:**
     ```bash
-    newman run testing/Collection.json -e testing/Env.json -r htmlextra --reporter-htmlextra-export reports/Report.html
+    git clone [https://github.com/thedatafae/github-api-automation-framework.git](https://github.com/thedatafae/github-api-automation-framework.git)
     ```
 
-### 🔍 Detailed Defect Analysis
-To view the specific bugs discovered during this project—including the **Critical Rollback Failure**—please refer to:
-👉 **[BUG_REPORTS.md](./BUG_REPORTS.md)**
+2.  **Import to Postman:**
+    * Import the collection: `collections/GitHub_API_Testing.json`
+    * Import the environment: `environments/GitHub_QA_Env.json`
 
+3.  **Set Variables:**
+    Update the `access_token` in your Postman environment with a valid GitHub Personal Access Token (PAT).
 
+4.  **Run via CLI (Newman):**
+    ```bash
+    newman run collections/GitHub_API_Testing.json -e environments/GitHub_QA_Env.json -r cli,htmlextra
+    ```
