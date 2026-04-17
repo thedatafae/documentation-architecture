@@ -1,62 +1,56 @@
-``` mermaid
+# 🛡️ SecurePay: API & Database Integrity Lab
+
+A specialized SQA automation project designed to validate **API-to-Database persistence** and **transactional integrity**. This lab utilizes a **Grey-Box testing** approach to ensure that high-level API responses accurately reflect the low-level MySQL state.
+
+---
+
+### 📊 Automated Quality Dashboard
+This project generates a professional **Newman HTML Dashboard** for every test run, providing real-time visibility into system health.
+
+* **Total Assertions**: 19 automated checks executed in under 2 seconds.
+* **Visual Evidence**: Detailed logs of every Request/Response pair, including headers and JSON bodies.
+* **Failure Analysis**: Dedicated section for failed tests, showing exactly where the Database logic broke.
+
+```mermaid
 graph LR
-    A[Postman Request] --> B[Flask API]
-    B --> C{MySQL DB}
-    C -->|Parity Check| B
-    B -->|JSON Response| A
-    A --> D[Newman HTML Report]
+    A[Auth Validation] --> B[CRUD Operations]
+    B --> C[Negative Testing]
+    C --> D[Environment Teardown]
+    D -->|Success| E[Quality Dashboard]
 ```
 
-# 🛡️ Standard Operating Procedure: SecurePay Integrity Lab
-**Project Domain:** API-to-Database Persistence & Transactional Logic  
-**Classification:** Technical Documentation / SQA Framework
+---
+
+### 🧪 Advanced Test Scenarios
+We implemented five distinct test tiers to ensure total system reliability:
+
+| Tier | Test Type | Objective |
+| :--- | :--- | :--- |
+| **01** | **Structure & DType** | Validating JSON schema and ensuring MySQL `DECIMAL` types aren't corrupted by the Python "Pipe". |
+| **02** | **Data Mapping** | Verifying 1:1 parity between the MySQL "Source of Truth" and the API response. |
+| **03** | **Request Chaining** | Using dynamic environment variables to capture balances before and after transactions for mathematical proof. |
+| **04** | **Negative & Security** | Stress-testing the API with "Ghost Users," negative amounts, and SQL injection attempts. |
+| **05** | **ACID Integrity** | Verifying that the Database correctly triggers a `ROLLBACK` during server crashes (500 errors). |
 
 ---
 
-## I. System Architecture & Overview
-The SecurePay laboratory validates transactional integrity between Flask-based API endpoints and MySQL. It ensures that high-level JSON responses reflect the low-level database state.
-
-* **Grey-Box Framework:** Evaluates internal system logic while monitoring external API request responses.
-* **Source of Truth:** Utilizes MySQL DECIMAL types to prevent floating-point errors in transactions.
-* **Validation Pipeline:** Bridges Python backend services with automated Postman and Newman testing.
-
----
-
-## II. Operational Test Tiers
-The following tiers define the technical logic used to verify system reliability.
-
-* **Schema Validation:** Verifies JSON structures match the defined MySQL table data types.
-* **Parity Mapping:** Confirms that API outputs remain identical to the database records.
-* **Logic Chaining:** Captures environment variables to calculate balances before and after transfers.
-* **Security Auditing:** Stress tests the endpoints against unauthorized ghost users and injections.
-* **ACID Verification:** Ensures the database triggers a rollback during critical server failures.
+### 📁 Project Structure
+* **`/backend`**: Flask API logic with intentional "hidden" bugs.
+* **`/database`**: SQL scripts for schema, seeding, and manual integrity checks.
+* **`/testing`**: Postman Collections and Environment variables.
+* **`/reports`**: Automated HTML test execution dashboards.
 
 ---
 
-## III. Execution & Environment Setup
-Follow these steps to initialize the lab and run automated documentation.
+### 🚦 Getting Started
+1.  **Database**: Import `database/schema.sql` and `database/seed_data.sql` into MySQL.
+2.  **API**: Run `pip install -r requirements.txt` and start the server with `python backend/main.py`.
+3.  **Tests**: Execute the Newman suite:
+    ```bash
+    newman run testing/Collection.json -e testing/Env.json -r htmlextra --reporter-htmlextra-export reports/Report.html
+    ```
 
-1. **Database Initialization:** Import the provided SQL scripts to seed the primary tables.
-2. **Server Deployment:** Install Python dependencies and launch the main Flask backend service.
-3. **Automated Execution:** Run the Newman suite to generate interactive HTML integrity reports.
+### 🔍 Detailed Defect Analysis
+To view the specific bugs discovered during this project—including the **Critical Rollback Failure**—please refer to:
+👉 **[BUG_REPORTS.md](./BUG_REPORTS.md)**
 
----
-
-## IV. Critical Defect Documentation
-Documentation of high-impact failures identified during the system audit process.
-
-* **Rollback Failure:** Identified critical financial loss where balances deducted despite server errors.
-* **Type Mismatch:** Documented decimal mapping errors that cause string concatenation in frontends.
-* **Ghost Security:** Discovered unhandled exceptions when processing transfers to non-existent user accounts.
-
----
-
-## V. Strategic Documentation Impact
-This SOP provides a blueprint for auditing high-stakes financial data systems.
-
-* **Traceability Matrix:** Links every API endpoint directly to specific MySQL integrity constraints.
-* **Audit Readiness:** Produces structured evidence required for industrial quality and compliance reporting.
-* **Logic Transparency:** Translates complex backend failures into actionable documentation for engineering teams.
-* **Traceability Matrix:** Links every API endpoint directly to specific MySQL integrity constraints.
-* **Audit Readiness:** Produces structured evidence required for industrial quality and compliance reporting.
-* **Logic Transparency:** Translates complex backend failures into actionable documentation for engineering teams.
