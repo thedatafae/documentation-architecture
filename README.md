@@ -32,9 +32,6 @@ graph LR
     B --> C[AI-Augmented Synthesis]
     C --> D[Precision Editing]
     D --> E[Final Documentation]
-    
-    style B fill:#f9f,stroke:#333
-    style E fill:#9f9,stroke:#333
 ```
 
 ## 📬 Contact & Connectivity
